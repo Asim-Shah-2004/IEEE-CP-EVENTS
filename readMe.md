@@ -5,22 +5,18 @@ A collection of algorithmic problem solutions implemented in C++, featuring deta
 1. **Maximum Water Container** (Container With Most Water)
    - Dynamic approach for optimizing container area
    - Time Complexity: O(n)
-   - [View Solution](solutions/maximum_water_container.cpp)
 
 2. **Minimum Cost Cake Cutting**
    - Greedy algorithm for optimal cutting strategy
    - Time Complexity: O(m log m + n log n)
-   - [View Solution](solutions/cake_cutting.cpp)
 
 3. **Travel Content Creator Score**
    - Dynamic programming for optimal path finding
    - Time Complexity: O(k × n²)
-   - [View Solution](solutions/travel_content.cpp)
 
 4. **Array GCD to Ones**
    - GCD-based transformation problem
    - Time Complexity: O(n² × log M)
-   - [View Solution](solutions/gcd_to_ones.cpp)
 
 ## 🚀 Getting Started
 
