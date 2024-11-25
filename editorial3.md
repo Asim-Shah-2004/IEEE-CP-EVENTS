@@ -1,131 +1,136 @@
-# Maximum Travel Content Score: Bottom-Up Approach  
-## Problem Statement  
-Tasha needs to maximize her score in Contentesia by balancing local content points earned by staying in a city and journey points earned by traveling between cities, over a fixed number of days.  
+# Maximum Travel Content Score: Bottom-Up Approach
+## Problem Statement
+Given a grid of cities and days, find the maximum score Tasha can achieve by either staying in a city (earning local content points) or traveling between cities (earning journey points) over a fixed number of days.
 
-## Intuition  
-This problem involves dynamic programming with a bottom-up approach to find the maximum score:  
-1. On each day, Tasha can either:  
-   - Stay in the current city  
-   - Travel to another city  
-2. The bottom-up DP table computes scores for all states iteratively.  
-3. The result is the highest score achievable after all days.  
+## Solution Approach
+### Bottom-Up Dynamic Programming
+We solve this problem using a bottom-up dynamic programming approach where we iteratively build the solution from day 1 to day k, considering all possible states and transitions.
 
-## Key Insights  
-1. **DP Table Representation**:  
-   - `dp[day][city]`: Maximum score achievable on a given day in a specific city.  
+### Key Concepts
+1. **State Definition**
+   - `dp[day][city]`: Maximum score achievable on day `day` when ending in `city`
 
-2. **Transition**:  
-   - Stay: Add local score for staying in the same city.  
-   - Travel: Add journey score and local score for the destination city.  
+2. **Transitions**
+   - Stay in current city: `dp[day+1][city] = max(dp[day][city] + stay[day][city], dp[day+1][city])`
+   - Travel to another city: `dp[day+1][nextCity] = max(dp[day][city] + travel[city][nextCity], dp[day+1][nextCity])`
 
-3. **Initialization and Iteration**:  
-   - Start with zero scores.  
-   - Iteratively update the DP table for each day and city based on possible decisions.  
+3. **Base Case**
+   - `dp[0][city] = 0` for all cities
 
-## Bottom-Up Dynamic Programming Solution  
-### Algorithm  
-1. Initialize `dp` array with zeros.  
-2. Iterate over each day:  
-   - Update scores for staying in the same city.  
-   - Update scores for traveling to another city.  
-3. Track the maximum score across all cities after the last day.  
-
-### Implementation  
+### Implementation
 ```cpp
-#include <vector>
-#include <iostream>
-#include <algorithm>
-using namespace std;
+class Solution {
+public:
+    /**
+     * Calculates maximum possible score for Tasha's travel content
+     * 
+     * @param n Number of cities
+     * @param k Number of days
+     * @param stay Points for staying in cities[k][n]
+     * @param travel Points for traveling between cities[n][n]
+     * @return Maximum achievable score
+     * 
+     * Time Complexity: O(k * n^2)
+     * Space Complexity: O(k * n)
+     */
+    long long maxTravelScore(int n, int k, 
+                           vector<vector<int>>& stay, 
+                           vector<vector<int>>& travel) {
+        // DP table initialization
+        long long dp[205][205] = {{0}};
+        long long ans = 0;
+        
+        // Bottom-up calculation
+        for(int day = 0; day < k; day++) {
+            for(int city = 0; city < n; city++) {
+                // Option 1: Stay in current city
+                dp[day + 1][city] = max(dp[day][city] + stay[day][city], 
+                                      dp[day + 1][city]);
+                ans = max(ans, dp[day + 1][city]);
+                
+                // Option 2: Travel to another city
+                for(int nextCity = 0; nextCity < n; nextCity++) {
+                    dp[day + 1][nextCity] = max(dp[day][city] + travel[city][nextCity],
+                                              dp[day + 1][nextCity]);
+                    ans = max(ans, dp[day + 1][nextCity]);
+                }
+            }
+        }
+        return ans;
+    }
+};
 
+// Driver code
 void solve() {
-    int n, k; 
+    int n, k;
     cin >> n >> k;
     
-    // Input for stayScore
+    // Input stay points
     vector<vector<int>> stay(k, vector<int>(n));
-    for (int i = 0; i < k; i++) {
-        for (int j = 0; j < n; j++) {
+    for(int i = 0; i < k; i++) {
+        for(int j = 0; j < n; j++) {
             cin >> stay[i][j];
         }
     }
     
-    // Input for travelScore
+    // Input travel points
     vector<vector<int>> travel(n, vector<int>(n));
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
             cin >> travel[i][j];
         }
     }
     
-    // DP table
-    long long dp[205][205] = {0};
-    long long maxScore = 0;
-    
-    // Bottom-up calculation
-    for (int day = 0; day < k; day++) {
-        for (int city = 0; city < n; city++) {
-            // Stay in the current city
-            dp[day + 1][city] = max(dp[day + 1][city], dp[day][city] + stay[day][city]);
-            maxScore = max(maxScore, dp[day + 1][city]);
-            
-            // Travel to another city
-            for (int nextCity = 0; nextCity < n; nextCity++) {
-                dp[day + 1][nextCity] = max(dp[day + 1][nextCity], dp[day][city] + travel[city][nextCity]);
-                maxScore = max(maxScore, dp[day + 1][nextCity]);
-            }
-        }
-    }
-    
-    // Output the maximum score
-    cout << maxScore << endl;
+    Solution solution;
+    cout << solution.maxTravelScore(n, k, stay, travel) << endl;
 }
 
 int main() {
     solve();
+    return 0;
 }
-```  
-
-## Code Breakdown  
-1. **Inputs**:  
-   - `stay` stores local content points for each city and day.  
-   - `travel` stores journey points between cities.  
-
-2. **DP Table**:  
-   - `dp[day][city]`: Tracks the maximum score on a specific day and city.  
-   - Updates are based on staying or traveling.  
-
-3. **Result**:  
-   - After all days, `maxScore` holds the highest score.  
-
-## Complexity Analysis  
-- **Time Complexity**: O(k × n²)  
-  * `k`: Days  
-  * `n`: Cities  
-  * Each day involves checking all city pairs.  
-
-- **Space Complexity**: O(k × n)  
-  * DP table size  
-
-## Example Walkthrough  
-### Input:  
 ```
-n = 2, k = 1  
-stayScore = [[2, 3]]  
-travelScore = [[0, 2], [1, 0]]  
-```  
 
-### Execution:  
-1. Day 0:  
-   - City 0: Stay = 2, Travel = 2  
-   - City 1: Stay = 3, Travel = 1  
+## Complexity Analysis
+- **Time Complexity**: O(k * n²)
+  - For each day (k), we consider each city (n) and possible transitions to other cities (n)
+  - Total: k * n * n operations
+  
+- **Space Complexity**: O(k * n)
+  - DP table size: k days × n cities
+  - Additional space for input arrays: O(k*n + n²)
 
-2. Day 1:  
-   - Max score = 3 (Start in City 1 and stay).  
-
-### Output:  
+## Example Test Case
 ```
-3
-```  
+Input:
+2 3  // n = 2 cities, k = 3 days
+1 2  // stay points for day 1
+3 1  // stay points for day 2
+2 3  // stay points for day 3
+0 5  // travel points
+4 0  // travel points
 
-## Summary  
-The bottom-up approach ensures efficient calculation of maximum scores with reusable subproblem solutions. It iteratively computes the best possible outcomes for each day and city, ultimately yielding the optimal result.
+Output:
+11   // Maximum achievable score
+```
+
+### Test Case Explanation
+1. Day 1: Start in city 1, score = 2
+2. Day 2: Travel to city 0, score = 2 + 4 + 3 = 9
+3. Day 3: Stay in city 0, score = 9 + 2 = 11
+
+## Common Pitfalls
+1. Not initializing the DP table properly
+2. Forgetting to update the maximum answer after each state transition
+3. Not handling the case when staying in the same city
+4. Integer overflow (use long long for large test cases)
+
+## Optimization Tips
+1. Use pre-computed arrays to store cumulative scores
+2. Consider using space optimization to reduce memory usage
+3. Cache frequently accessed values to improve performance
+
+## Follow-up Questions
+1. Can you modify the solution to also return the path taken?
+2. How would you handle negative scores?
+3. What if there are restrictions on consecutive stays in the same city?
