@@ -1,4 +1,5 @@
-# Maximum Travel Content Score: Editorial Solution
+# Maximum Travel Content Score: Comprehensive Solution
+
 ## Problem Statement
 Tasha needs to maximize her score in Contentesia by optimally choosing between staying in cities for local content points and traveling between cities for journey points over a fixed number of days.
 
@@ -23,16 +24,11 @@ This is a dynamic programming problem where at each day and city:
    - Maximum score from current state = max(stay_score, max_travel_score)
    - Solutions to subproblems can be reused
 
-## Dynamic Programming Solution
-### Algorithm
-1. Create DP state: dp[day][current_city]
-2. For each state:
-   - Try staying (one option)
-   - Try traveling to each other city
-   - Take maximum of all choices
-3. Try starting from each city
+## Dynamic Programming Approaches
 
-### Recurrence Relation
+### Approach 1: Top-Down Recursive Solution with Memoization
+
+#### Recurrence Relation
 ```
 dp[k][curr] = max(
     stayScore[k][curr] + dp[k+1][curr],
@@ -40,7 +36,7 @@ dp[k][curr] = max(
 )
 ```
 
-## Implementation Analysis
+#### Implementation
 ```cpp
 class Solution {
 public:
@@ -87,23 +83,7 @@ public:
 };
 ```
 
-### Code Breakdown
-1. **DP Array**:
-   - `dp[201][201]`: Stores maximum score for each day and city
-   - Initialized to -1 for memoization
-
-2. **solve() Function**:
-   - Parameters:
-     * k: current day
-     * n: number of cities
-     * currCity: current location
-   - Returns maximum possible score from this state
-
-3. **maxScore() Function**:
-   - Tries each city as starting point
-   - Returns global maximum score
-
-## Complexity Analysis
+#### Complexity Analysis (Top-Down)
 - **Time Complexity**: O(k × n²)
   * States: k days × n cities
   * Each state considers n travel options
@@ -113,9 +93,76 @@ public:
   * DP table size
   * Recursion stack depth O(k)
 
+### Approach 2: Bottom-Up Dynamic Programming Solution
+
+#### Implementation
+```cpp
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+void solve() {
+    int n, k; 
+    cin >> n >> k;
+    
+    // Input for stayScore
+    vector<vector<int>> stay(k, vector<int>(n));
+    for (int i = 0; i < k; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> stay[i][j];
+        }
+    }
+    
+    // Input for travelScore
+    vector<vector<int>> travel(n, vector<int>(n));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> travel[i][j];
+        }
+    }
+    
+    // DP table
+    long long dp[205][205] = {0};
+    long long maxScore = 0;
+    
+    // Bottom-up calculation
+    for (int day = 0; day < k; day++) {
+        for (int city = 0; city < n; city++) {
+            // Stay in the current city
+            dp[day + 1][city] = max(dp[day + 1][city], dp[day][city] + stay[day][city]);
+            maxScore = max(maxScore, dp[day + 1][city]);
+            
+            // Travel to another city
+            for (int nextCity = 0; nextCity < n; nextCity++) {
+                dp[day + 1][nextCity] = max(dp[day + 1][nextCity], dp[day][city] + travel[city][nextCity]);
+                maxScore = max(maxScore, dp[day + 1][nextCity]);
+            }
+        }
+    }
+    
+    // Output the maximum score
+    cout << maxScore << endl;
+}
+
+int main() {
+    solve();
+}
+```
+
+#### Complexity Analysis (Bottom-Up)
+- **Time Complexity**: O(k × n²)
+  * `k`: Days
+  * `n`: Cities
+  * Each day involves checking all city pairs
+
+- **Space Complexity**: O(k × n)
+  * DP table size
+
 ## Example Walkthrough
 Using sample input: n=2, k=1, stayScore=[[2,3]], travelScore=[[0,2],[1,0]]
 
+### Top-Down Approach:
 1. Try starting from City 0:
    - Stay: 2 points
    - Travel to City 1: 2 points
@@ -127,3 +174,23 @@ Using sample input: n=2, k=1, stayScore=[[2,3]], travelScore=[[0,2],[1,0]]
    - Maximum: 3 points
 
 3. Global maximum: 3 points (start in City 1 and stay)
+
+### Bottom-Up Approach:
+1. Day 0:
+   - City 0: Stay = 2, Travel = 2
+   - City 1: Stay = 3, Travel = 1
+
+2. Day 1:
+   - Max score = 3 (Start in City 1 and stay)
+
+## Key Insights
+1. Both approaches solve the problem using dynamic programming
+2. Top-down uses recursion with memoization
+3. Bottom-up uses iterative table filling
+4. Both have similar time and space complexity
+5. Choice between approaches depends on personal preference and specific use case
+
+## Recommendation
+- Use top-down approach if you prefer recursive thinking
+- Use bottom-up approach for slightly better space efficiency
+- Both solutions provide optimal results for the maximum travel content score problem
