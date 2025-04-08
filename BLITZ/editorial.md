@@ -10,21 +10,7 @@ The approach is:
 
 This efficiently identifies the target patterns while preserving other characters.
 
-## Question 2: Dessert Dilemma in Techtopia
-
-This problem analyzes the number of ways Toma can choose desserts with constraints:
-- Toma has n coins
-- The coffee shop offers k desserts
-
-We need to consider two limiting factors:
-
-1. With unlimited coins but k desserts, Toma could choose any subset of desserts: 2^k possible combinations (each dessert is either taken or not)
-
-2. With n coins but unlimited dessert options, Toma could spend any amount from 0 to n coins: n+1 possibilities
-
-Since both constraints apply simultaneously, the answer is the minimum of these two values: min(2^k, n+1)
-
-## Question 3: Glitch in Techtopia's Text Grid
+## Question 2: Glitch in Techtopia's Text Grid
 
 This problem involves understanding the effect of deleting adjacent pairs of characters from a string.
 
@@ -35,6 +21,33 @@ If s[i] = s[i+2], then deleting either pair gives the same string. Otherwise, we
 To find the number of distinct strings possible, we:
 1. Count positions i where s[i] = s[i+2] (for 1 ≤ i ≤ n-2)
 2. Subtract this count from the total number of possible deletions (n-1)
+
+## Question 3: Circuit Sync In Techtopia
+
+This problem involves transforming one string s into another string t using two operations:
+
+Flip operation: Change a single character (costs 1)
+Swap operation: Swap two adjacent characters with opposite values (costs 1)
+
+The key insight is that using the swap operation is only beneficial when there are two consecutive positions that need fixing AND they have opposite values. In all other cases, using individual flip operations is optimal.
+
+Solution Explanation
+The algorithm works as follows:
+
+Iterate through both strings character by character
+When a mismatch is found (s[i] ≠ t[i]), check if we can use a swap operation:
+
+If the next position also has a mismatch (s[i+1] ≠ t[i+1])
+AND the characters in string s at positions i and i+1 are different (s[i] ≠ s[i+1])
+Then use a swap operation (increment answer by 1 and skip 2 positions)
+
+
+Otherwise, use a flip operation (increment answer by 1 and move to the next position)
+If characters match, simply move to the next position
+
+This greedy approach ensures minimal operations are used to transform string s into string t.
+The time complexity is O(n) where n is the length of the strings, as we process each character at most once.
+The code properly implements this strategy by checking positions where the characters differ, applying the optimal operation at each step, and counting the total number of operations needed
 
 ## Question 4: Desorting
 
